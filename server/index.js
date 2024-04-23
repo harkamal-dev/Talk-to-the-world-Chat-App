@@ -21,12 +21,8 @@ const io = new Server(server, {
 });
 
 // Middlewares
+app.use(cors());
 app.use(express.json());
-app.use(
-	cors({
-		origin: "http://localhost:9000",
-	})
-);
 
 app.get("/", (_, res) => {
 	res.send("Talk to the world is running perfectly. ");
