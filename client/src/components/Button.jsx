@@ -3,7 +3,7 @@ import React from "react";
 
 const CustomButton = ({ label, onClick, ...rest }) => {
 	return (
-		<Button variant="contained" size="large" className="!bg-textBg" onClick={onClick} {...rest}>
+		<Button variant="contained" size="large" onClick={onClick} className="ubuntu-medium" {...rest}>
 			{label}
 		</Button>
 	);

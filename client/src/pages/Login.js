@@ -1,38 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
-import { io } from "socket.io-client";
-import { Input, CustomButton } from "components";
-
-let socket;
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "contexts/authContext";
+import useToaster from "hooks/useToaster";
+import { Input, CustomButton, CustomTypography } from "components/";
+import { loginUser } from "apis/login";
+import { loginUserInitialValues } from "../constants";
 
 const Login = () => {
-	const [user, setUser] = useState("");
-
-	useEffect(() => {}, []);
+	const [formData, setFormData] = useState(loginUserInitialValues);
+	const navigate = useNavigate();
+	const { showToast } = useToaster();
+	const { setUserDetails } = useContext(AuthContext);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(user);
-		setUser("");
+		handleSignup();
 	};
 
-	const handleChange = ({ target: { value } }) => {
-		setUser(value);
+	const handleChange = ({ target: { value, id } }) => {
+		setFormData((prev) => ({
+			...prev,
+			[id]: value,
+		}));
+	};
+
+	const handleSignup = async () => {
+		try {
+			let {
+				data: { user },
+			} = await loginUser(formData);
+			setUserDetails(user);
+			showToast("User Login successfully.");
+			navigate("/dashboard");
+			setFormData(loginUserInitialValues);
+		} catch (error) {
+			console.log(error);
+			showToast(error.response.data);
+		}
 	};
 
 	return (
-		<div className="w-full h-screen bg-backdropBg flex justify-center items-center ">
-			<div className="w-1/2 h-1/2 bg-orangeBg rounded-2xl flex flex-col justify-evenly">
-				<Typography variant="h4" component="h2" className="text-textBg text-center !font-bold">
-					Talk To The World
-				</Typography>
+		<div className="w-full h-screen bg-primaryWhite flex justify-center items-center">
+			<div className="w-2/5 h-1/2 bg-primaryLightBg rounded-2xl flex flex-col justify-evenly shadow-xl">
+				<CustomTypography className="text-primaryWhite ubuntu-medium" />
 
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
-					<div className="flex flex-col gap-8 w-3/4">
-						<Input label="Name" value={user} onChange={handleChange} />
-						<CustomButton type="submit" label="SIGNUP" />
+					<div className="flex flex-col gap-6 w-3/4">
+						<Input label="Email" id="email" value={formData.email} onChange={handleChange} />
+						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
+						<CustomButton type="submit" label="LOGIN" />
 					</div>
 				</form>
+
+				<div>
+					<CustomTypography label="Don't have an account?" variant="body2" className="text-primaryWhite" />
+					<Link to="/signup">
+						<CustomTypography
+							label="Signup here"
+							variant="body1"
+							className="cursor-pointer underline !mt-3 text-primaryWhite ubuntu-medium"
+						/>
+					</Link>
+				</div>
 			</div>
 		</div>
 	);

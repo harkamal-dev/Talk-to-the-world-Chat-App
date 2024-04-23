@@ -1,3 +1,74 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.useScrollbar::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+.noScrollbar::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+.useScrollbar::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+.useScrollbar::-webkit-scrollbar-thumb {
+	background: #d6d6d6;
+	border-radius: 10px;
+}
+
+body {
+	font-family: "Ubuntu", sans-serif !important;
+}
+
+.ubuntu-light {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 300 !important;
+	font-style: normal;
+}
+
+.ubuntu-regular {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 400 !important;
+	font-style: normal;
+}
+
+.ubuntu-medium {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 500 !important;
+	font-style: normal;
+}
+
+.ubuntu-bold {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 700;
+	font-style: normal;
+}
+
+.ubuntu-light-italic {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 300;
+	font-style: italic;
+}
+
+.ubuntu-regular-italic {
+	font-family: "Ubuntu", sans-serif !important;
+	font-weight: 400;
+	font-style: italic;
+}
+
+.ubuntu-medium-italic {
+	font-family: "Ubuntu", sans-serif;
+	font-weight: 500;
+	font-style: italic;
+}
+
+.ubuntu-bold-italic {
+	font-family: "Ubuntu", sans-serif;
+	font-weight: 700;
+	font-style: italic;
+}
