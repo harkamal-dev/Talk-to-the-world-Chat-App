@@ -33,8 +33,8 @@ const Signup = () => {
 
 	return (
 		<div className="w-full h-screen bg-primaryWhite flex justify-center items-center ">
-			<div className="w-2/5 h-1/2 bg-primaryLightBg rounded-2xl flex flex-col justify-evenly shadow-xl ">
-				<CustomTypography className="ubuntu-medium" />
+			<div className="w-full m-6 md:m-0 md:w-2/5 p-6 bg-primaryLightBg rounded-2xl flex flex-col justify-evenly shadow-xl ">
+				<CustomTypography className="ubuntu-medium" wrapperClassName="mb-4" />
 
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
 					<div className="flex flex-col gap-6 w-3/4">
@@ -45,11 +45,14 @@ const Signup = () => {
 					</div>
 				</form>
 
-				<div>
-					<Link to="/">
-						<CustomTypography label="Login here" variant="body1" className="cursor-pointer underline mt-4 ubuntu-medium" />
-					</Link>
-				</div>
+				<Link to="/">
+					<CustomTypography
+						label="Login here"
+						variant="body1"
+						className="cursor-pointer underline mt-4 ubuntu-medium"
+						wrapperClassName="mt-4"
+					/>
+				</Link>
 			</div>
 		</div>
 	);
