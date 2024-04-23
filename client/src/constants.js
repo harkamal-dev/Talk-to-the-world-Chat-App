@@ -9,6 +9,6 @@ const loginUserInitialValues = {
 	password: "12345",
 };
 
-const BASE_URL = "http://localhost:8089";
+const BASE_URL = process.env.BASE_URL
 
 export { signUpUserInitialValues, loginUserInitialValues, BASE_URL };

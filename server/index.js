@@ -11,6 +11,7 @@ import Conversations from "./models/conversations.js";
 import Messages from "./models/messages.js";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "JWT_VERY_SECRET_KEY";
+const PORT = process.env.PORT || 8089;
 
 const app = express();
 const server = createServer(app);
@@ -246,7 +247,7 @@ io.on("connection", (socket) => {
 
 // DB Connect
 connectDB().then(() =>
-	server.listen(8089, () => {
+	server.listen(PORT, () => {
 		console.log("server running at http://localhost:8089");
 	})
 );
