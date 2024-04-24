@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { PersonAdd } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 import { AuthContext } from "contexts/authContext";
-import CustomTypography from "./Typography";
-import Conversation from "./Conversation";
+import { SocketContext } from "contexts/socketContext";
 import useToaster from "hooks/useToaster";
-import UserAutocomplete from "./UserAutocomplete";
-import CustomButton from "./Button";
 import { getUsers } from "apis/login";
 import { getConversations, createConversation } from "apis/conversation";
-import { IconButton } from "@mui/material";
+import { CustomTypography, UserAutocomplete, CustomButton } from "components";
+import Conversation from "./Conversation";
 
 const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedConversation }) => {
 	const [conversationList, setConversationList] = useState([]);
@@ -19,7 +18,17 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 	const formattedUsersList = useRef([]);
 	const { currentUser } = useContext(AuthContext);
 	const { showToast } = useToaster();
-	
+	const { socket } = useContext(SocketContext);
+
+	useEffect(() => {
+		if (socket && currentUser) {
+			socket.on("getNewConversation", (conversation) => {
+				console.log(conversation);
+				setConversationList((prevConversation) => [...prevConversation, conversation]);
+			});
+		}
+	}, [socket, currentUser]);
+
 	const fetchConversations = async () => {
 		try {
 			let { data } = await getConversations(currentUser?._id);
@@ -63,6 +72,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 			let senderId = currentUser._id;
 			let receiverId = formattedUsersList.current.find((item) => item.label === selectedUserValue.label).id;
 			let { data } = await createConversation({ senderId, receiverId });
+			socket.emit("sendConversation", { ...data, userId: currentUser?._id });
 			setSelectedConversation(data);
 			fetchConversations();
 		} catch (error) {

@@ -2,9 +2,8 @@ import React, { useContext } from "react";
 import { AddIcCall, ArrowBack } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import classNames from "classnames";
-import ProfileAvatar from "./ProfileAvatar";
-import CustomTypography from "./Typography";
-import { checkIsOnlineUsers } from "../helpers";
+import { ProfileAvatar, CustomTypography } from "components";
+import { checkIsOnlineUsers } from "helpers";
 import { AuthContext } from "contexts/authContext";
 import { SocketContext } from "contexts/socketContext";
 import useToaster from "hooks/useToaster";
@@ -16,8 +15,8 @@ const MessageHeader = ({ selectedConversation, setIsShowMessagesUI }) => {
 
 	const handleCallClick = () => {
 		showToast("This feature is not developed yet. Will be added in future. Stay tuned.");
-    };
-    
+	};
+
 	return (
 		<div
 			className={classNames(

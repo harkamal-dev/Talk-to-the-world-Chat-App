@@ -2,9 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from "rea
 import classNames from "classnames";
 import { Send } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import CustomTypography from "./Typography";
-import Message from "./Message";
-import Input from "./Input";
+import { CustomTypography, Input } from "components";
 import { getMessages, sendMessageApi } from "apis/messages";
 import useToaster from "hooks/useToaster";
 import { AuthContext } from "contexts/authContext";

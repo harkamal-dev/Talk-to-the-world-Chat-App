@@ -75,7 +75,7 @@ const ProfileAvatar = ({ label, w = 44, h = 44, isOnline = false }) => {
 	}
 
 	return (
-		<div className="border border-primaryDarkBg p-[2px] rounded-full">
+		<div className="border border-primaryLightBg p-[2px] rounded-full">
 			{isOnline ? (
 				<StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
 					<Avatar {...stringAvatar(label)} />

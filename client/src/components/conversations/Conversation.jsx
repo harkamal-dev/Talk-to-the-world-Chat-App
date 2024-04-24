@@ -1,14 +1,12 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "contexts/authContext";
 import classNames from "classnames";
-import ProfileAvatar from "./ProfileAvatar";
-import CustomTypography from "./Typography";
-import CustomButton from "./Button";
+import { AuthContext } from "contexts/authContext";
+import { SocketContext } from "contexts/socketContext";
 import useToaster from "hooks/useToaster";
 import { logoutUser } from "apis/login";
-import { SocketContext } from "contexts/socketContext";
-import { checkIsOnlineUsers } from "../helpers";
+import { checkIsOnlineUsers } from "helpers";
+import { ProfileAvatar, CustomTypography, CustomButton } from "components";
 
 const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className }) => {
 	const { currentUser } = useContext(AuthContext);

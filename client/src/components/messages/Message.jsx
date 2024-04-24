@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import CustomTypography from "./Typography";
+import { CustomTypography } from "components";
 
 const Message = ({ message, isAdmin }) => {
 	return (

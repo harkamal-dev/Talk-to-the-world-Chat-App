@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "contexts/authContext";
-import ConversationList from "components/ConversationsList";
-import Messages from "components/Messages";
+import React, { useState } from "react";
+import ConversationList from "components/conversations/ConversationsList";
+import Messages from "components/messages/Messages";
 import classNames from "classnames";
 
 const Dashboard = () => {

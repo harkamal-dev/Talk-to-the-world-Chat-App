@@ -1,5 +1,9 @@
-import CustomButton from "./Button";
-import Input from "./Input";
-import CustomTypography from "./Typography";
+import CustomButton from "./common/Button";
+import Input from "./common/Input";
+import CustomTypography from "./common/Typography";
+import NoMatch from "./common/NoMatch";
+import ProfileAvatar from "./common/ProfileAvatar";
+import ProtectedRoute from "./common/ProtectedRoute";
+import UserAutocomplete from "./common/UserAutocomplete";
 
-export { CustomButton, Input, CustomTypography };
+export { CustomButton, Input, CustomTypography, NoMatch, ProfileAvatar, ProtectedRoute, UserAutocomplete };

@@ -66,7 +66,7 @@ app.post("/api/login", async (req, res, next) => {
 			} else {
 				const validateUser = await bcryptjs.compare(password, user.password);
 				if (!validateUser) {
-					res.status(400).send("User email or password is incorrect.");
+					res.status(400).send("Password is incorrect.");
 				} else {
 					const payload = {
 						userId: user._id,
@@ -241,6 +241,21 @@ io.on("connection", (socket) => {
 		let findOnlineUser = onlineUsers.find((user) => user.userId === newMessage.receiverId);
 		if (findOnlineUser) {
 			io.to(findOnlineUser.socketId).emit("getNewMessages", newMessage);
+		}
+	});
+
+	socket.on("sendConversation", async (newConv) => {
+		let findOnlineUser = onlineUsers.find((user) => user.userId === newConv.user.id);
+		if (findOnlineUser) {
+			let user = await Users.findById(newConv.userId);
+			let resData = {};
+			resData.conversationId = newConv.conversationId;
+			resData.user = {
+				name: user.fullName,
+				email: user.email,
+				id: user._id,
+			};
+			io.to(findOnlineUser.socketId).emit("getNewConversation", resData);
 		}
 	});
 });

@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Route, BrowserRouter, Routes, useNavigate } from "react-router-dom";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { io } from "socket.io-client";
 import Login from "pages/Login";
 import Signup from "pages/Signup";
 import Dashboard from "pages/Dashboard";
 import { AuthContext } from "contexts/authContext";
-import { SocketContext } from "./context/socketContext";
-import NoMatch from "components/NoMatch";
-import { getUserfromToken } from "./apis/login";
+import { SocketContext } from "contexts/socketContext";
+import { NoMatch, ProtectedRoute } from "components";
+import { getUserfromToken } from "apis/login";
 import useToaster from "hooks/useToaster";
-import ProtectedRoute from "./components/ProtectedRoute";
 import { BASE_URL } from "./constants";
-import { muiTheme } from "./helpers";
+import { muiTheme } from "helpers";
 
 const App = () => {
 	const [currentUser, setCurrentUser] = useState(null);

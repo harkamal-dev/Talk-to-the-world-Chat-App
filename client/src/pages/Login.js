@@ -45,7 +45,7 @@ const Login = () => {
 				<CustomTypography className="text-primaryWhite ubuntu-medium" wrapperClassName="mb-4" />
 
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
-					<div className="flex flex-col gap-6 w-3/4">
+					<div className="flex flex-col gap-6 w-full lg:w-3/4">
 						<Input label="Email" id="email" value={formData.email} onChange={handleChange} />
 						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
 						<CustomButton type="submit" label="LOGIN" />
