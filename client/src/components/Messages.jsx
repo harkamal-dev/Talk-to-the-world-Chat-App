@@ -1,36 +1,26 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { AddIcCall, Send, ArrowBack } from "@mui/icons-material";
+import { Send } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import CustomTypography from "./Typography";
 import Message from "./Message";
 import Input from "./Input";
-import ProfileAvatar from "./ProfileAvatar";
 import { getMessages, sendMessageApi } from "apis/messages";
 import useToaster from "hooks/useToaster";
 import { AuthContext } from "contexts/authContext";
-import { BASE_URL } from "../constants";
-import { io } from "socket.io-client";
+import { SocketContext } from "contexts/socketContext";
+import MessageHeader from "./MessageHeader";
 
 const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI }) => {
 	const [userInput, setuserInput] = useState("");
 	const [messagesList, setMessagesList] = useState([]);
 	const bottomScrollViewRef = useRef(null);
 	const { currentUser } = useContext(AuthContext);
+	const { socket } = useContext(SocketContext);
 	const { showToast } = useToaster();
-	const [socket, setSocket] = useState(null);
-
-	useEffect(() => {
-		setSocket(io(BASE_URL));
-	}, []);
 
 	useEffect(() => {
 		if (socket && currentUser) {
-			socket.emit("addUser", currentUser?._id);
-			socket.on("getOnlineUsers", (users) => {
-				console.log({ users });
-			});
-
 			socket.on("getNewMessages", (message) => {
 				setMessagesList((prevMessages) => [...prevMessages, message]);
 			});
@@ -91,40 +81,7 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 
 	return (
 		<div className={classNames("p-2 lg:p-6", wrapperClassName)}>
-			<div
-				className={classNames("flex gap-4 items-center mb-4 bg-secondaryLightBg p-2 pl-4 pr-8 rounded-full", {
-					"justify-center": !selectedConversation,
-					"justify-between": selectedConversation,
-				})}
-			>
-				<div
-					className={classNames("flex gap-4 items-center", {
-						"justify-center": !selectedConversation,
-						"justify-start": selectedConversation,
-					})}
-				>
-					<IconButton
-						onClick={() => setIsShowMessagesUI(false)}
-						color="primary"
-						className="!text-primaryDarkBg h-full lg:!hidden"
-						aria-label="back"
-					>
-						<ArrowBack />
-					</IconButton>
-					{selectedConversation && <ProfileAvatar label={selectedConversation?.user?.name} w={40} h={40} />}
-					<CustomTypography
-						label={selectedConversation?.user?.name ?? "Select a conversation to start chat"}
-						variant="h6"
-						className="ubuntu-medium"
-					/>
-				</div>
-				<AddIcCall
-					className={classNames("text-textBlack cursor-pointer hover:!text-hoverBg hover:transition-transform", {
-						"!hidden": !selectedConversation,
-					})}
-				/>
-			</div>
-
+			<MessageHeader selectedConversation={selectedConversation} setIsShowMessagesUI={setIsShowMessagesUI} />
 			{selectedConversation && (
 				<>
 					<div className="shadow-sm h-[calc(100vh-11rem)] lg:h-[calc(100vh-12rem)] flex flex-col gap-2 overflow-y-auto useScrollbar mb-6">

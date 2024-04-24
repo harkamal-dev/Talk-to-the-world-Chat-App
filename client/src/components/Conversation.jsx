@@ -7,11 +7,14 @@ import CustomTypography from "./Typography";
 import CustomButton from "./Button";
 import useToaster from "hooks/useToaster";
 import { logoutUser } from "apis/login";
+import { SocketContext } from "contexts/socketContext";
+import { checkIsOnlineUsers } from "../helpers";
 
 const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className }) => {
 	const { currentUser } = useContext(AuthContext);
 	const Navigate = useNavigate();
 	const { showToast } = useToaster();
+	const { onlineUsers } = useContext(SocketContext);
 
 	const getConditionalAvatar = () => {
 		if (isAdmin && !currentUser) {
@@ -20,7 +23,12 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 		if (!isAdmin && !convData) {
 			return null;
 		}
-		return <ProfileAvatar label={isAdmin ? currentUser?.fullName : convData.user.name} />;
+		return (
+			<ProfileAvatar
+				label={isAdmin ? currentUser?.fullName : convData.user.name}
+				isOnline={!!checkIsOnlineUsers(currentUser?._id, onlineUsers, convData)}
+			/>
+		);
 	};
 
 	const logOutUser = () => {
@@ -41,10 +49,16 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 			)}
 			{...(!isAdmin && { onClick: () => setSelectedConversation(convData) })}
 		>
-			<div className="flex gap-4 items-center">
+			<div className="flex gap-2 lg:gap-4 items-center">
 				{getConditionalAvatar()}
 				<div>
-					<CustomTypography label={isAdmin ? "Admin" : convData.user.name} variant="body1" className="text-start ubuntu-medium" />
+					<div className="flex gap-2 items-center">
+						<CustomTypography
+							label={isAdmin ? "Admin" : convData.user.name}
+							variant="body1"
+							className="text-start ubuntu-medium"
+						/>
+					</div>
 					<CustomTypography label={isAdmin ? currentUser?.email : convData.user.email} variant="body2" />
 				</div>
 			</div>
