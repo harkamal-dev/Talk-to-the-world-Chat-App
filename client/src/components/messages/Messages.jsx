@@ -8,6 +8,7 @@ import useToaster from "hooks/useToaster";
 import { AuthContext } from "contexts/authContext";
 import { SocketContext } from "contexts/socketContext";
 import MessageHeader from "./MessageHeader";
+import Message from "./Message";
 
 const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI }) => {
 	const [userInput, setuserInput] = useState("");
