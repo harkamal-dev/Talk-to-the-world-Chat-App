@@ -3,10 +3,13 @@ import { Input, CustomButton, CustomTypography } from "components/";
 import { signUpUser } from "apis/login";
 import { signUpUserInitialValues } from "../constants";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isValidEmail } from "helpers";
 
 const Signup = () => {
 	const [formData, setFormData] = useState(signUpUserInitialValues);
+	const [errors, setErrors] = useState({});
+	const Navigate = useNavigate()
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -22,9 +25,15 @@ const Signup = () => {
 
 	const handleSignup = async () => {
 		try {
-			let res = await signUpUser(formData);
-			toast("User created successfully.");
-			setFormData(signUpUserInitialValues);
+			if (!isValidEmail(formData?.email)) {
+				setErrors({ ...errors, email: "Please type correct email." });
+			} else {
+				setErrors({});
+				let res = await signUpUser(formData);
+				toast("User created successfully.");
+				Navigate("/");
+				setFormData(signUpUserInitialValues);
+			}
 		} catch (error) {
 			console.log(error);
 			toast(error.response.data);
@@ -39,7 +48,14 @@ const Signup = () => {
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
 					<div className="flex flex-col gap-6 w-full lg:w-3/4">
 						<Input label="Name" id="fullName" value={formData.fullName} onChange={handleChange} />
-						<Input label="Email" id="email" value={formData.email} onChange={handleChange} />
+						<Input
+							label="Email"
+							id="email"
+							value={formData.email}
+							onChange={handleChange}
+							error={errors.email}
+							helperText={errors.email}
+						/>
 						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
 						<CustomButton type="submit" label="SIGNUP" />
 					</div>

@@ -5,16 +5,18 @@ import useToaster from "hooks/useToaster";
 import { Input, CustomButton, CustomTypography } from "components/";
 import { loginUser } from "apis/login";
 import { loginUserInitialValues } from "../constants";
+import { isValidEmail } from "../helpers";
 
 const Login = () => {
 	const [formData, setFormData] = useState(loginUserInitialValues);
+	const [errors, setErrors] = useState({});
 	const navigate = useNavigate();
 	const { showToast } = useToaster();
 	const { setUserDetails } = useContext(AuthContext);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		handleSignup();
+		handleLogin();
 	};
 
 	const handleChange = ({ target: { value, id } }) => {
@@ -24,15 +26,20 @@ const Login = () => {
 		}));
 	};
 
-	const handleSignup = async () => {
+	const handleLogin = async () => {
 		try {
-			let {
-				data: { user },
-			} = await loginUser(formData);
-			setUserDetails(user);
-			showToast("User Login successfully.");
-			navigate("/dashboard");
-			setFormData(loginUserInitialValues);
+			if (!isValidEmail(formData?.email)) {
+				setErrors({ ...errors, email: "Please type correct email." });
+			} else {
+				setErrors({});
+				let {
+					data: { user },
+				} = await loginUser({ ...formData, email: String(formData?.email).toLowerCase() });
+				setUserDetails(user);
+				showToast("User Login successfully.");
+				navigate("/dashboard");
+				setFormData(loginUserInitialValues);
+			}
 		} catch (error) {
 			console.log(error);
 			showToast(error.response.data);
@@ -46,7 +53,14 @@ const Login = () => {
 
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
 					<div className="flex flex-col gap-6 w-full lg:w-3/4">
-						<Input label="Email" id="email" value={formData.email} onChange={handleChange} />
+						<Input
+							label="Email"
+							id="email"
+							value={formData.email}
+							onChange={handleChange}
+							error={errors.email}
+							helperText={errors.email}
+						/>
 						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
 						<CustomButton type="submit" label="LOGIN" />
 					</div>
