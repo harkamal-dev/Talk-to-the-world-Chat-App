@@ -10,17 +10,17 @@ const Message = ({ message, isAdmin }) => {
 			})}
 		>
 			<div
-				className={classNames("p-4 min-w-[20rem] max-w-[30rem] rounded-xl shadow-md", {
+				className={classNames("p-2 lg:p-4 min-w-[10rem] lg:min-w-[20rem] max-w-[15rem] lg:max-w-[30rem] rounded-xl shadow-md", {
 					"bg-primaryLightBg rounded-tl-none": !isAdmin,
 					"bg-primaryDarkBg text-primaryWhite rounded-br-none": isAdmin,
 				})}
 			>
 				<CustomTypography
-					className={classNames("text-start",{
+					className={classNames("text-start", {
 						"!text-textBlack": !isAdmin,
 						"!text-primaryWhite": isAdmin,
-                    })}
-                    variant="body1"
+					})}
+					variant="body1"
 					label={message.message}
 				/>
 			</div>

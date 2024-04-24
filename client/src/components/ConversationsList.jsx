@@ -74,7 +74,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 	return (
 		<div className={classNames("bg-primaryLightBg flex flex-col pt-4", wrapperClassName)}>
 			<Conversation isAdmin />
-			<div className="p-8 pb-0">
+			<div className="p-4 lg:p-8 pb-0">
 				<div
 					className={classNames("flex justify-between items-center", {
 						"mb-4": isShowAddUserAutoComplete,

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { AddIcCall, Send } from "@mui/icons-material";
+import { AddIcCall, Send, ArrowBack } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import CustomTypography from "./Typography";
 import Message from "./Message";
@@ -12,7 +12,7 @@ import { AuthContext } from "contexts/authContext";
 import { BASE_URL } from "../constants";
 import { io } from "socket.io-client";
 
-const Messages = ({ wrapperClassName, selectedConversation }) => {
+const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI }) => {
 	const [userInput, setuserInput] = useState("");
 	const [messagesList, setMessagesList] = useState([]);
 	const bottomScrollViewRef = useRef(null);
@@ -90,7 +90,7 @@ const Messages = ({ wrapperClassName, selectedConversation }) => {
 	};
 
 	return (
-		<div className={classNames("p-6", wrapperClassName)}>
+		<div className={classNames("p-2 lg:p-6", wrapperClassName)}>
 			<div
 				className={classNames("flex gap-4 items-center mb-4 bg-secondaryLightBg p-2 pl-4 pr-8 rounded-full", {
 					"justify-center": !selectedConversation,
@@ -103,6 +103,14 @@ const Messages = ({ wrapperClassName, selectedConversation }) => {
 						"justify-start": selectedConversation,
 					})}
 				>
+					<IconButton
+						onClick={() => setIsShowMessagesUI(false)}
+						color="primary"
+						className="!text-primaryDarkBg h-full lg:!hidden"
+						aria-label="back"
+					>
+						<ArrowBack />
+					</IconButton>
 					{selectedConversation && <ProfileAvatar label={selectedConversation?.user?.name} w={40} h={40} />}
 					<CustomTypography
 						label={selectedConversation?.user?.name ?? "Select a conversation to start chat"}
@@ -119,7 +127,7 @@ const Messages = ({ wrapperClassName, selectedConversation }) => {
 
 			{selectedConversation && (
 				<>
-					<div className="shadow-sm h-[calc(100vh-12rem)] flex flex-col gap-2 overflow-y-auto useScrollbar mb-6">
+					<div className="shadow-sm h-[calc(100vh-11rem)] lg:h-[calc(100vh-12rem)] flex flex-col gap-2 overflow-y-auto useScrollbar mb-6">
 						{!!messagesList.length ? (
 							messagesList.map((message) => (
 								<Message message={message} key={message._id} isAdmin={message.senderId === currentUser._id} />
@@ -134,7 +142,7 @@ const Messages = ({ wrapperClassName, selectedConversation }) => {
 						<label ref={bottomScrollViewRef} />
 					</div>
 
-					<form className="flex gap-6" onSubmit={handleSendMessage}>
+					<form className="flex gap-2 lg:gap-6" onSubmit={handleSendMessage}>
 						<Input
 							hiddenLabel
 							label=""
