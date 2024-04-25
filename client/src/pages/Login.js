@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "contexts/authContext";
 import useToaster from "hooks/useToaster";
 import { Input, CustomButton, CustomTypography } from "components/";
 import { loginUser } from "apis/login";
 import { loginUserInitialValues } from "../constants";
 import { isValidEmail } from "../helpers";
+import GoogleSvgComponent from "../assets/icons/google";
+import { googleLoginAPI } from "../apis/login";
 
 const Login = () => {
 	const [formData, setFormData] = useState(loginUserInitialValues);
@@ -46,6 +49,23 @@ const Login = () => {
 		}
 	};
 
+	const googleLogin = useGoogleLogin({
+		onSuccess: async (codeResponse) => {
+			try {
+				const { data } = await googleLoginAPI(codeResponse);
+				setUserDetails({
+					_id: "notdecided",
+					fullName: data.name,
+					email: data.email
+				});
+				navigate("/dashboard");
+			} catch (error) {
+				console.log("Login Failed:", error);
+			}
+		},
+		onError: (error) => console.log("Login Failed:", error),
+	});
+
 	return (
 		<div className="w-full h-screen bg-primaryWhite flex justify-center items-center">
 			<div className="w-full m-6 md:m-0 md:w-2/5 p-6 bg-primaryLightBg rounded-2xl flex flex-col justify-evenly shadow-xl">
@@ -60,12 +80,27 @@ const Login = () => {
 							onChange={handleChange}
 							error={errors.email}
 							helperText={errors.email}
+							variant="standard"
 						/>
-						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
+						<Input
+							label="Password"
+							id="password"
+							type="password"
+							variant="standard"
+							value={formData.password}
+							onChange={handleChange}
+						/>
 						<CustomButton type="submit" label="LOGIN" />
 					</div>
 				</form>
-
+				<div className="flex justify-center pt-4">
+					<CustomButton variant="outlined" size="small" onClick={googleLogin}>
+						<div className="flex gap-2 items-center">
+							<GoogleSvgComponent />
+							<CustomTypography variant="body2" label="Sign in with Google" />
+						</div>
+					</CustomButton>
+				</div>
 				<div>
 					<CustomTypography
 						label="Don't have an account?"

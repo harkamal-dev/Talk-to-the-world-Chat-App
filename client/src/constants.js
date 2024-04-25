@@ -6,7 +6,7 @@ const signUpUserInitialValues = {
 
 const loginUserInitialValues = {
 	email: "hk@gmail.com",
-	password: "Hks@123",
+	password: "",
 };
 
 const BASE_URL = process.env.BASE_URL

@@ -28,4 +28,12 @@ const logoutUser = (id) => {
 	return axiosInstance.post(`/api/logoutUser/${id}`);
 };
 
-export { signUpUser, loginUser, getUsers, getUserfromToken, logoutUser };
+const googleLoginAPI = (codeResponse) => {
+	return axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`, {
+		headers: {
+			Authorization: `Bearer ${codeResponse.access_token}`,
+			Accept: "application/json",
+		},
+	});
+};
+export { signUpUser, loginUser, getUsers, getUserfromToken, logoutUser, googleLoginAPI };

@@ -53,7 +53,7 @@ const MessageHeader = ({ selectedConversation, setIsShowMessagesUI }) => {
 					<CustomTypography
 						label={selectedConversation?.user?.name ?? "Select a conversation to start chat"}
 						variant="h6"
-						className="ubuntu-medium"
+						className="ubuntu-regular !text-lg"
 					/>
 					{!!checkIsOnlineUsers(currentUser?._id, onlineUsers, selectedConversation) && (
 						<CustomTypography label="(Online)" variant="caption" wrapperClassName="h-full" />

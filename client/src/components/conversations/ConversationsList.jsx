@@ -84,6 +84,34 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 		}
 	};
 
+	const getConversationListUI = () => {
+		if (isConversationListLoading) {
+			return Array(5)
+				.fill("")
+				.map((item, index) => (
+					<Conversation
+						className="bg-primaryWhite first:rounded-t-2xl"
+						key={index}
+						isConversationListLoading={isConversationListLoading}
+					/>
+				));
+		} else if (!!conversationList.length) {
+			return conversationList?.map((conv) => (
+				<Conversation
+					className={classNames("bg-primaryWhite first:rounded-t-2xl", {
+						"!bg-secondaryLightBg": selectedConversation?.conversationId === conv?.conversationId,
+					})}
+					key={conv.conversationId}
+					convData={conv}
+					setSelectedConversation={setSelectedConversation}
+					isConversationListLoading={isConversationListLoading}
+				/>
+			));
+		} else {
+			return <CustomTypography variant="body1" label="No conversations? You can start one by clicking above icon." wrapperClassName="p-4" />;
+		}
+	};
+
 	return (
 		<div className={classNames("bg-primaryLightBg flex flex-col pt-4", wrapperClassName)}>
 			<Conversation isAdmin />
@@ -112,31 +140,12 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 					</div>
 				)}
 				<div
-					className={classNames("rounded-2xl mt-4 max-h-[calc(100vh-14rem)] overflow-y-auto noScrollbar shadow-xl", {
+					className={classNames("rounded-2xl mt-4 max-h-[calc(100vh-14rem)] overflow-y-auto noScrollbar", {
 						"max-h-[calc(100vh-18rem)]": isShowAddUserAutoComplete,
+						"shadow-xl": !!conversationList.length
 					})}
 				>
-					{isConversationListLoading
-						? Array(5)
-								.fill("")
-								.map((item, index) => (
-									<Conversation
-										className="bg-primaryWhite first:rounded-t-2xl"
-										key={index}
-										isConversationListLoading={isConversationListLoading}
-									/>
-								))
-						: conversationList?.map((conv) => (
-								<Conversation
-									className={classNames("bg-primaryWhite first:rounded-t-2xl", {
-										"!bg-secondaryLightBg": selectedConversation?.conversationId === conv?.conversationId,
-									})}
-									key={conv.conversationId}
-									convData={conv}
-									setSelectedConversation={setSelectedConversation}
-									isConversationListLoading={isConversationListLoading}
-								/>
-						  ))}
+					{getConversationListUI()}
 				</div>
 			</div>
 		</div>
