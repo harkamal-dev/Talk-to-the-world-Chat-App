@@ -45,8 +45,6 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 		showToast("Logout successfully. Will see you soon.");
 	};
 
-	console.log(isConversationListLoading);
-
 	return (
 		<div
 			className={classNames(

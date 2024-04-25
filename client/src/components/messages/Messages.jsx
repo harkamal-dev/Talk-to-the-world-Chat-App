@@ -9,6 +9,7 @@ import { AuthContext } from "contexts/authContext";
 import { SocketContext } from "contexts/socketContext";
 import MessageHeader from "./MessageHeader";
 import Message from "./Message";
+import { checkIfUserOnMobile } from "../../helpers";
 
 const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI }) => {
 	const [userInput, setuserInput] = useState("");
@@ -64,8 +65,8 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 			};
 			socket.emit("sendMessage", payload);
 			let { data } = await sendMessageApi(payload);
+			setMessagesList((prevMessages) => [...prevMessages, data?.newMessage]);
 			setuserInput("");
-			fetchMessages(selectedConversation);
 		} catch (error) {
 			showToast(error);
 		}
@@ -124,7 +125,7 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 							onChange={handleMessageChange}
 							placeholder="Type a message"
 							size="small"
-							autoFocus
+							autoFocus={!checkIfUserOnMobile()}
 						/>
 						<IconButton type="submit" color="primary" className="!text-primaryDarkBg h-full" aria-label="send message">
 							<Send className="!text-3xl" />

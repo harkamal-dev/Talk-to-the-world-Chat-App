@@ -21,11 +21,13 @@ const muiTheme = createTheme({
 });
 
 const isValidEmail = (email) => {
-	// Regular expression pattern for email validation
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-	// Test the email against the pattern
 	return emailPattern.test(email);
 };
 
-export { checkIsOnlineUsers, muiTheme, isValidEmail };
+const checkIfUserOnMobile = () => {
+	let width = window.innerWidth;
+	return width < 768;
+};
+
+export { checkIsOnlineUsers, muiTheme, isValidEmail, checkIfUserOnMobile };
