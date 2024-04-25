@@ -13,6 +13,7 @@ import Message from "./Message";
 const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI }) => {
 	const [userInput, setuserInput] = useState("");
 	const [messagesList, setMessagesList] = useState([]);
+	const [isMessagesListLoading, setIsMessagesListLoading] = useState(true);
 	const bottomScrollViewRef = useRef(null);
 	const { currentUser } = useContext(AuthContext);
 	const { socket } = useContext(SocketContext);
@@ -35,13 +36,16 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 	const fetchMessages = useCallback(
 		async (selectedConversation) => {
 			try {
+				setIsMessagesListLoading(true);
 				let { data } = await getMessages({ convId: selectedConversation?.conversationId });
 				setMessagesList(data);
 			} catch (error) {
 				showToast(error);
+			} finally {
+				setIsMessagesListLoading(false);
 			}
 		},
-		[selectedConversation]
+		[selectedConversation, messagesList]
 	);
 
 	useEffect(() => {
@@ -78,23 +82,39 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 		}
 	};
 
+	console.log({ messagesList, isMessagesListLoading });
+
+	const getMessagesListUI = () => {
+		if (isMessagesListLoading) {
+			return Array(10)
+				.fill("")
+				.map((_, idx) => <Message key={idx} isAdmin={idx % 2 === 0} isMessagesListLoading={isMessagesListLoading} />);
+		} else if (!!messagesList.length) {
+			return messagesList.map((message) => (
+				<Message
+					message={message}
+					key={message._id}
+					isAdmin={message.senderId === currentUser._id}
+					setIsMessagesListLoading={isMessagesListLoading}
+				/>
+			));
+		} else
+			return (
+				<CustomTypography
+					wrapperClassName="h-full flex items-center justify-center"
+					label="Be the first to send the message"
+					variant="h6"
+				/>
+			);
+	};
+
 	return (
 		<div className={classNames("p-2 lg:p-6", wrapperClassName)}>
 			<MessageHeader selectedConversation={selectedConversation} setIsShowMessagesUI={setIsShowMessagesUI} />
 			{selectedConversation && (
 				<>
 					<div className="shadow-sm h-[calc(100vh-11rem)] lg:h-[calc(100vh-12rem)] flex flex-col gap-2 overflow-y-auto useScrollbar mb-6">
-						{!!messagesList.length ? (
-							messagesList.map((message) => (
-								<Message message={message} key={message._id} isAdmin={message.senderId === currentUser._id} />
-							))
-						) : (
-							<CustomTypography
-								wrapperClassName="h-full flex items-center justify-center"
-								label="Be the first to send the message"
-								variant="h6"
-							/>
-						)}
+						{getMessagesListUI()}
 						<label ref={bottomScrollViewRef} />
 					</div>
 

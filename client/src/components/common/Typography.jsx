@@ -8,7 +8,7 @@ const CustomTypography = ({ label = "Talk To The World", variant = "h5", classNa
 			<Typography
 				variant={variant}
 				component="h2"
-				className={classNames("text-textBlack text-center !font-bold ubuntu-regular", className)}
+				className={classNames("text-textBlack text-center !font-bold ubuntu-regular  break-words", className)}
 				{...rest}
 			>
 				{label}

@@ -12,6 +12,7 @@ import Conversation from "./Conversation";
 
 const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedConversation }) => {
 	const [conversationList, setConversationList] = useState([]);
+	const [isConversationListLoading, setIsConversationListLoading] = useState(true);
 	const [isShowAddUserAutoComplete, setIsShowAddUserAutoComplete] = useState(false);
 	const [selectedUserValue, setSelectedUserValue] = useState(null);
 	const [users, setUsers] = useState([]);
@@ -36,6 +37,8 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 		} catch (error) {
 			console.log(error);
 			showToast(error);
+		} finally {
+			setIsConversationListLoading(false);
 		}
 	};
 
@@ -113,16 +116,27 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 						"max-h-[calc(100vh-18rem)]": isShowAddUserAutoComplete,
 					})}
 				>
-					{conversationList?.map((conv) => (
-						<Conversation
-							className={classNames("bg-primaryWhite first:rounded-t-2xl", {
-								"!bg-secondaryLightBg": selectedConversation?.conversationId === conv?.conversationId,
-							})}
-							key={conv.conversationId}
-							convData={conv}
-							setSelectedConversation={setSelectedConversation}
-						/>
-					))}
+					{isConversationListLoading
+						? Array(5)
+								.fill("")
+								.map((item, index) => (
+									<Conversation
+										className="bg-primaryWhite first:rounded-t-2xl"
+										key={index}
+										isConversationListLoading={isConversationListLoading}
+									/>
+								))
+						: conversationList?.map((conv) => (
+								<Conversation
+									className={classNames("bg-primaryWhite first:rounded-t-2xl", {
+										"!bg-secondaryLightBg": selectedConversation?.conversationId === conv?.conversationId,
+									})}
+									key={conv.conversationId}
+									convData={conv}
+									setSelectedConversation={setSelectedConversation}
+									isConversationListLoading={isConversationListLoading}
+								/>
+						  ))}
 				</div>
 			</div>
 		</div>
