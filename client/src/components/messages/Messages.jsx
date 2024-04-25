@@ -82,8 +82,6 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 		}
 	};
 
-	console.log({ messagesList, isMessagesListLoading });
-
 	const getMessagesListUI = () => {
 		if (isMessagesListLoading) {
 			return Array(10)

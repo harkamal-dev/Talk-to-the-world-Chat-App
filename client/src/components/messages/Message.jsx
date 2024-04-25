@@ -26,7 +26,7 @@ const Message = ({ message, isAdmin, isMessagesListLoading }) => {
 						label={message.message}
 					/>
 				) : (
-					<Skeleton wrapperClassName="p-0" />
+					<Skeleton wrapperClassName="!p-0" />
 				)}
 			</div>
 		</div>
