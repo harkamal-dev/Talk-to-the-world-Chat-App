@@ -3,7 +3,7 @@ import { Avatar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 
-const ProfileAvatar = ({ label, w = 44, h = 44, isOnline = false }) => {
+const ProfileAvatar = ({ label, w = 44, h = 44, isOnline = false, profilePhoto }) => {
 	const StyledBadge = styled(Badge)(({ theme }) => ({
 		"& .MuiBadge-badge": {
 			backgroundColor: "#44b700",
@@ -75,8 +75,16 @@ const ProfileAvatar = ({ label, w = 44, h = 44, isOnline = false }) => {
 	}
 
 	return (
-		<div className="border border-primaryLightBg p-[2px] rounded-full">
-			{isOnline ? (
+		<div className="border border-gray-300 p-[2px] rounded-full">
+			{profilePhoto ? (
+				isOnline ? (
+					<StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
+						<Avatar src={profilePhoto} />
+					</StyledBadge>
+				) : (
+					<Avatar src={profilePhoto} />
+				)
+			) : isOnline ? (
 				<StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
 					<Avatar {...stringAvatar(label)} />
 				</StyledBadge>

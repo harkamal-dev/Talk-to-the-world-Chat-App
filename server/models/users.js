@@ -12,7 +12,13 @@ const userSchema = mongoose.Schema({
 	},
 	password: {
 		type: String,
-		required: true,
+		required: false,
+	},
+	isGoogleAuth: {
+		type: Boolean,
+	},
+	profilePhoto: {
+		type: String,
 	},
 	token: {
 		type: String,

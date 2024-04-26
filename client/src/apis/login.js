@@ -36,4 +36,9 @@ const googleLoginAPI = (codeResponse) => {
 		},
 	});
 };
-export { signUpUser, loginUser, getUsers, getUserfromToken, logoutUser, googleLoginAPI };
+
+const googleLoginUser = (payload) => {
+	return axiosInstance.post("/api/googleAuth/login", payload);
+};
+
+export { signUpUser, loginUser, getUsers, getUserfromToken, logoutUser, googleLoginAPI, googleLoginUser };

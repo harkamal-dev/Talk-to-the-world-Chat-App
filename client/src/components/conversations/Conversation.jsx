@@ -8,7 +8,7 @@ import { logoutUser } from "apis/login";
 import { checkIsOnlineUsers } from "helpers";
 import { ProfileAvatar, CustomTypography, CustomButton, Skeleton } from "components";
 
-const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className, isConversationListLoading }) => {
+const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className, isConversationListLoading, }) => {
 	const Navigate = useNavigate();
 	const { currentUser } = useContext(AuthContext);
 	const { showToast } = useToaster();
@@ -34,6 +34,7 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 			<ProfileAvatar
 				label={isAdmin ? currentUser?.fullName : convData?.user?.name}
 				isOnline={!!checkIsOnlineUsers(currentUser?._id, onlineUsers, convData)}
+				profilePhoto={isAdmin ? currentUser?.profilePhoto : convData?.user?.profilePhoto}
 			/>
 		);
 	};

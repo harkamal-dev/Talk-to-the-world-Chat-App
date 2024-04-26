@@ -8,7 +8,7 @@ import { loginUser } from "apis/login";
 import { loginUserInitialValues } from "../constants";
 import { isValidEmail } from "../helpers";
 import GoogleSvgComponent from "../assets/icons/google";
-import { googleLoginAPI } from "../apis/login";
+import { googleLoginAPI, googleLoginUser } from "../apis/login";
 
 const Login = () => {
 	const [formData, setFormData] = useState(loginUserInitialValues);
@@ -52,12 +52,17 @@ const Login = () => {
 	const googleLogin = useGoogleLogin({
 		onSuccess: async (codeResponse) => {
 			try {
-				const { data } = await googleLoginAPI(codeResponse);
-				setUserDetails({
-					_id: "notdecided",
-					fullName: data.name,
-					email: data.email
+				const {
+					data: { email, name, picture },
+				} = await googleLoginAPI(codeResponse);
+				const {
+					data: { user },
+				} = await googleLoginUser({
+					email,
+					name,
+					profilePhoto: picture,
 				});
+				setUserDetails(user);
 				navigate("/dashboard");
 			} catch (error) {
 				console.log("Login Failed:", error);

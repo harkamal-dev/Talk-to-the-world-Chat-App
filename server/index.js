@@ -156,6 +156,7 @@ app.post("/api/conversation", async (req, res) => {
 				name: receiverUser.fullName,
 				email: receiverUser.email,
 				id: receiverUser._id,
+				profilePhoto: receiverUser?.profilePhoto,
 			},
 			conversationId: conv._id,
 		};
@@ -179,6 +180,7 @@ app.get("/api/conversation/:userId", async (req, res) => {
 						name: receiverUser.fullName,
 						email: receiverUser.email,
 						id: receiverUser._id,
+						profilePhoto: receiverUser?.profilePhoto,
 					},
 					conversationId: conv._id,
 				};
@@ -219,6 +221,35 @@ app.get("/api/message/:conversationId", async (req, res) => {
 	}
 });
 
+app.post("/api/googleAuth/login", async (req, res, next) => {
+	try {
+		const { name, email, profilePhoto } = req.body;
+		const isEmailExists = await Users.findOne({ email });
+
+		if (!isEmailExists) {
+			const newUser = new Users({ fullName: name, email, isGoogleAuth: true, profilePhoto });
+			await newUser.save();
+		}
+		const user = await Users.findOne({ email });
+		const payload = {
+			userId: user._id,
+			email: user.email,
+		};
+		jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: 84600 }, async (err, token) => {
+			if (err) {
+				console.error("Error signing token:", err);
+				res.status(500).send("Error signing token.");
+			} else {
+				user.token = token;
+				await user.save();
+				res.status(200).json({ user: user, token });
+			}
+		});
+	} catch (error) {
+		res.status(400).send("Error");
+	}
+});
+
 // Web Sockets
 let onlineUsers = [];
 io.on("connection", (socket) => {
@@ -254,6 +285,7 @@ io.on("connection", (socket) => {
 				name: user.fullName,
 				email: user.email,
 				id: user._id,
+				profilePhoto: user?.profilePhoto,
 			};
 			io.to(findOnlineUser.socketId).emit("getNewConversation", resData);
 		}
