@@ -47,6 +47,7 @@ const MessageHeader = ({ selectedConversation, setIsShowMessagesUI }) => {
 						w={40}
 						h={40}
 						isOnline={!!checkIsOnlineUsers(currentUser?._id, onlineUsers, selectedConversation)}
+						profilePhoto={selectedConversation?.user?.profilePhoto}
 					/>
 				)}
 				<div className="flex items-baseline gap-2">
