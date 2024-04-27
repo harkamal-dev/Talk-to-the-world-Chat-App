@@ -5,6 +5,9 @@ const conversationSchema = mongoose.Schema({
 		type: Array,
 		required: true,
 	},
+	lastMessage: {
+		type: Object,
+	},
 });
 
 const Conversations = mongoose.model("Conversation", conversationSchema);

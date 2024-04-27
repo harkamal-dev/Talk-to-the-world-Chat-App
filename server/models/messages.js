@@ -13,6 +13,9 @@ const messageSchema = mongoose.Schema({
 	message: {
 		type: String,
 	},
+	dateTime: {
+		type: Date,
+	},
 });
 
 const Messages = mongoose.model("Message", messageSchema);

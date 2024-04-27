@@ -4,13 +4,12 @@ import classNames from "classnames";
 import { AuthContext } from "contexts/authContext";
 import { SocketContext } from "contexts/socketContext";
 import useToaster from "hooks/useToaster";
-import { logoutUser } from "apis/login";
 import { checkIsOnlineUsers } from "helpers";
 import { ProfileAvatar, CustomTypography, CustomButton, Skeleton } from "components";
 
-const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className, isConversationListLoading, }) => {
+const Conversation = ({ convData, isAdmin = false, setSelectedConversation, className, isConversationListLoading }) => {
 	const Navigate = useNavigate();
-	const { currentUser } = useContext(AuthContext);
+	const { currentUser, logoutUser } = useContext(AuthContext);
 	const { showToast } = useToaster();
 	const { onlineUsers } = useContext(SocketContext);
 
@@ -37,13 +36,6 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 				profilePhoto={isAdmin ? currentUser?.profilePhoto : convData?.user?.profilePhoto}
 			/>
 		);
-	};
-
-	const logOutUser = () => {
-		logoutUser(currentUser._id);
-		sessionStorage.removeItem("token");
-		Navigate("/");
-		showToast("Logout successfully. Will see you soon.");
 	};
 
 	return (
@@ -76,7 +68,13 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 						)}
 					</div>
 					{!isConversationListLoading ? (
-						<CustomTypography label={isAdmin ? currentUser?.email : convData?.user?.email} variant="body2" />
+						<CustomTypography
+							label={isAdmin ? currentUser?.email : convData?.lastMessage?.message ?? ""}
+							variant="body2"
+							className={classNames("text-start break-words", {
+								"!text-primaryDarkBg" : !isAdmin
+							})}
+						/>
 					) : (
 						<Skeleton
 							variant="text"
@@ -90,7 +88,7 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 
 			{isAdmin && (
 				<div className="m-4">
-					<CustomButton label="Logout" size="small" onClick={logOutUser} />
+					<CustomButton label="Logout" size="small" onClick={logoutUser} />
 				</div>
 			)}
 		</div>

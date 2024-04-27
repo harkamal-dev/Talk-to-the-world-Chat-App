@@ -5,10 +5,11 @@ const signUpUserInitialValues = {
 };
 
 const loginUserInitialValues = {
-	email: "hk@gmail.com",
+	email: "",
 	password: "",
 };
 
-const BASE_URL = process.env.BASE_URL
+const BASE_URL = process.env.BASE_URL;
+const GOOGLE_AUTH_CLIENT_ID = process.env.GOOGLE_AUTH_CLIENT_ID;
 
-export { signUpUserInitialValues, loginUserInitialValues, BASE_URL };
+export { signUpUserInitialValues, loginUserInitialValues, BASE_URL, GOOGLE_AUTH_CLIENT_ID };

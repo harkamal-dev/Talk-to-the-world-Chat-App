@@ -17,6 +17,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 	const [selectedUserValue, setSelectedUserValue] = useState(null);
 	const [users, setUsers] = useState([]);
 	const formattedUsersList = useRef([]);
+	const conversationListRef = useRef([]);
 	const { currentUser } = useContext(AuthContext);
 	const { showToast } = useToaster();
 	const { socket } = useContext(SocketContext);
@@ -27,13 +28,31 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 				console.log(conversation);
 				setConversationList((prevConversation) => [...prevConversation, conversation]);
 			});
+			socket.on("getNewMessageInConversation", (conversation) => {
+				console.log({ conversationListRef });
+				let localConversationList = [...conversationListRef.current];
+				let newConvIdx = localConversationList.findIndex((conv) => conv.conversationId === conversation.conversationId);
+				localConversationList[newConvIdx] = {
+					...localConversationList[newConvIdx],
+					lastMessage: {
+						message: conversation.lastMessage.message,
+						senderId: conversation.lastMessage.senderId,
+					},
+				};
+				debugger
+				setConversationList(localConversationList);
+				conversationListRef.current = localConversationList;
+			});
 		}
 	}, [socket, currentUser]);
+
+	console.log(conversationList);
 
 	const fetchConversations = async () => {
 		try {
 			let { data } = await getConversations(currentUser?._id);
 			setConversationList(data);
+			conversationListRef.current = data;
 		} catch (error) {
 			console.log(error);
 			showToast(error);
@@ -108,7 +127,13 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 				/>
 			));
 		} else {
-			return <CustomTypography variant="body1" label="No conversations? You can start one by clicking above icon." wrapperClassName="p-4" />;
+			return (
+				<CustomTypography
+					variant="body1"
+					label="No conversations? You can start one by clicking above icon."
+					wrapperClassName="p-4"
+				/>
+			);
 		}
 	};
 
@@ -142,7 +167,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 				<div
 					className={classNames("rounded-2xl mt-4 max-h-[calc(100vh-14rem)] overflow-y-auto noScrollbar", {
 						"max-h-[calc(100vh-18rem)]": isShowAddUserAutoComplete,
-						"shadow-xl": !!conversationList.length
+						"shadow-xl": !!conversationList.length,
 					})}
 				>
 					{getConversationListUI()}

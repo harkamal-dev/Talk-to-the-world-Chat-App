@@ -24,7 +24,7 @@ const getUserfromToken = (payload) => {
 	return axiosInstance.get(`/api/getUserFromToken/${payload?.token}`, { params: payload });
 };
 
-const logoutUser = (id) => {
+const logOutUser = (id) => {
 	return axiosInstance.post(`/api/logoutUser/${id}`);
 };
 
@@ -41,4 +41,4 @@ const googleLoginUser = (payload) => {
 	return axiosInstance.post("/api/googleAuth/login", payload);
 };
 
-export { signUpUser, loginUser, getUsers, getUserfromToken, logoutUser, googleLoginAPI, googleLoginUser };
+export { signUpUser, loginUser, getUsers, getUserfromToken, logOutUser, googleLoginAPI, googleLoginUser };

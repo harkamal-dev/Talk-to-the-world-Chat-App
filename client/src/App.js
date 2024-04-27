@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,9 +11,9 @@ import Dashboard from "pages/Dashboard";
 import { AuthContext } from "contexts/authContext";
 import { SocketContext } from "contexts/socketContext";
 import { NoMatch, ProtectedRoute } from "components";
-import { getUserfromToken } from "apis/login";
+import { getUserfromToken, logOutUser } from "apis/login";
 import useToaster from "hooks/useToaster";
-import { BASE_URL } from "./constants";
+import { BASE_URL, GOOGLE_AUTH_CLIENT_ID } from "./constants";
 import { muiTheme } from "helpers";
 
 const App = () => {
@@ -21,6 +21,7 @@ const App = () => {
 	const [socket, setSocket] = useState(null);
 	const [onlineUsers, setOnlineUsers] = useState([]);
 	const { showToast } = useToaster();
+	const Navigate = useNavigate();
 
 	useEffect(() => {
 		const getUserFromToken = async (token) => {
@@ -29,6 +30,8 @@ const App = () => {
 				setCurrentUser(data);
 			} catch (error) {
 				showToast(error?.response?.data);
+				sessionStorage.removeItem("token");
+				Navigate("/");
 			}
 		};
 
@@ -53,14 +56,26 @@ const App = () => {
 		sessionStorage.setItem("token", user.token);
 	};
 
+	const logoutUser = async () => {
+		try {
+			await logOutUser(currentUser._id);
+			sessionStorage.removeItem("token");
+			Navigate("/");
+			showToast("Logout successfully. Will see you again.");
+		} catch (error) {
+			showToast(error?.response?.data);
+		}
+	};
+
 	return (
 		<>
 			<ThemeProvider theme={muiTheme}>
-				<GoogleOAuthProvider clientId="446682945322-5d6ljsqb8dagdrvbv7ui176b5e4ioi7v.apps.googleusercontent.com">
+				<GoogleOAuthProvider clientId={GOOGLE_AUTH_CLIENT_ID}>
 					<AuthContext.Provider
 						value={{
 							currentUser,
 							setUserDetails,
+							logoutUser,
 						}}
 					>
 						<SocketContext.Provider
@@ -69,21 +84,19 @@ const App = () => {
 								onlineUsers,
 							}}
 						>
-							<BrowserRouter>
-								<Routes>
-									<Route path="/" element={<Login />} />
-									<Route path="/signup" element={<Signup />} />
-									<Route
-										path="/dashboard"
-										element={
-											<ProtectedRoute>
-												<Dashboard />
-											</ProtectedRoute>
-										}
-									/>
-									<Route path="*" element={<NoMatch />} />
-								</Routes>
-							</BrowserRouter>
+							<Routes>
+								<Route path="/" element={<Login />} />
+								<Route path="/signup" element={<Signup />} />
+								<Route
+									path="/dashboard"
+									element={
+										<ProtectedRoute>
+											<Dashboard />
+										</ProtectedRoute>
+									}
+								/>
+								<Route path="*" element={<NoMatch />} />
+							</Routes>
 						</SocketContext.Provider>
 						<ToastContainer position="bottom-right" progressStyle={{ background: muiTheme.palette.primary.main }} />
 					</AuthContext.Provider>

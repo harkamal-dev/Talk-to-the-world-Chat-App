@@ -9,6 +9,8 @@ import connectDB from "./db/connection.js";
 import Users from "./models/users.js";
 import Conversations from "./models/conversations.js";
 import Messages from "./models/messages.js";
+import moment from "moment-timezone";
+import { formatIST } from "./helpers.js";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "JWT_VERY_SECRET_KEY";
 const PORT = process.env.PORT || 8089;
@@ -54,7 +56,7 @@ app.post("/api/register", async (req, res, next) => {
 	}
 });
 
-app.post("/api/login", async (req, res, next) => {
+app.post("/api/login", async (req, res) => {
 	try {
 		const { email, password } = req.body;
 		if (!email || !password) {
@@ -104,11 +106,15 @@ app.get("/api/users", async (req, res) => {
 app.get("/api/getUserFromToken/:token", async (req, res) => {
 	try {
 		let token = req.params.token;
-		const isValidToken = jwt.verify(token, JWT_SECRET_KEY);
-		if (isValidToken) {
-			let user = await Users.findOne({ email: isValidToken.email });
-			return res.status(200).json(user);
-		} else {
+		try {
+			const isValidToken = jwt.verify(token, JWT_SECRET_KEY);
+			if (isValidToken) {
+				let user = await Users.findOne({ email: isValidToken.email });
+				return res.status(200).json(user);
+			} else {
+				return res.status(400).send("Token expired. Please login again.");
+			}
+		} catch (error) {
 			return res.status(400).send("Token expired. Please login again.");
 		}
 	} catch (error) {
@@ -183,6 +189,7 @@ app.get("/api/conversation/:userId", async (req, res) => {
 						profilePhoto: receiverUser?.profilePhoto,
 					},
 					conversationId: conv._id,
+					lastMessage: conv?.lastMessage,
 				};
 			})
 		);
@@ -199,9 +206,21 @@ app.post("/api/message", async (req, res) => {
 		if (!message || !senderId || !receiverId || !conversationId) {
 			res.status(400).send("Please fill all the details.");
 		} else {
-			let newMessage = new Messages({ senderId, receiverId, message, conversationId });
+			let newMessage = new Messages({ senderId, receiverId, message, conversationId, dateTime: formatIST() });
+			let conversation = await Conversations.findOne({ members: { $all: [senderId, receiverId] } });
+			await Conversations.updateOne(
+				{ _id: conversation._id },
+				{
+					$set: {
+						lastMessage: {
+							message,
+							senderId,
+						},
+					},
+				}
+			);
 			await newMessage.save();
-			res.status(200).json({ newMessage });
+			res.status(200).json({ newMessage: { ...newMessage.toObject(), dateTime: formatIST() } });
 		}
 	} catch (error) {
 		console.log(error);
@@ -213,7 +232,6 @@ app.get("/api/message/:conversationId", async (req, res) => {
 	try {
 		const conversationId = req.params.conversationId;
 		const messagesList = await Messages.find({ conversationId });
-
 		res.status(200).json(messagesList);
 	} catch (error) {
 		console.log(error);
@@ -221,7 +239,7 @@ app.get("/api/message/:conversationId", async (req, res) => {
 	}
 });
 
-app.post("/api/googleAuth/login", async (req, res, next) => {
+app.post("/api/googleAuth/login", async (req, res) => {
 	try {
 		const { name, email, profilePhoto } = req.body;
 		const isEmailExists = await Users.findOne({ email });
@@ -269,9 +287,46 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("sendMessage", async (newMessage) => {
-		let findOnlineUser = onlineUsers.find((user) => user.userId === newMessage.receiverId);
-		if (findOnlineUser) {
-			io.to(findOnlineUser.socketId).emit("getNewMessages", newMessage);
+		try {
+			let findOnlineUserReceiver = onlineUsers.find((user) => user.userId === newMessage.receiverId);
+			let findOnlineUserSender = onlineUsers.find((user) => user.userId === newMessage.senderId);
+			let receiverUser = await Users.findById(newMessage.receiverId);
+			let senderUser = await Users.findById(newMessage.senderId);
+
+			if (findOnlineUserReceiver) {
+				io.to(findOnlineUserReceiver.socketId).emit("getNewMessages", newMessage);
+				io.to(findOnlineUserReceiver.socketId).emit("getNewMessageInConversation", {
+					user: {
+						name: receiverUser.fullName,
+						email: receiverUser.email,
+						id: receiverUser._id,
+						profilePhoto: receiverUser?.profilePhoto,
+					},
+					conversationId: newMessage.conversationId,
+					lastMessage: {
+						message: newMessage.message,
+						senderId: newMessage.senderId,
+					},
+				});
+			}
+
+			if (findOnlineUserSender) {
+				io.to(findOnlineUserSender.socketId).emit("getNewMessageInConversation", {
+					user: {
+						name: senderUser.fullName,
+						email: senderUser.email,
+						id: senderUser._id,
+						profilePhoto: senderUser?.profilePhoto,
+					},
+					conversationId: newMessage.conversationId,
+					lastMessage: {
+						message: newMessage.message,
+						senderId: newMessage.senderId,
+					},
+				});
+			}
+		} catch (error) {
+			console.error("Error sending message:", error);
 		}
 	});
 
