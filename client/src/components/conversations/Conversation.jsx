@@ -38,6 +38,22 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 		);
 	};
 
+	const getLastMessageUI = () => {
+		if (isAdmin) {
+			return currentUser?.email;
+		} else if (!convData?.lastMessage) {
+			return "";
+		} else if (convData?.lastMessage?.senderId === currentUser._id) {
+			return `You: ${(convData?.lastMessage?.message || "").slice(0, 15)}${
+				convData?.lastMessage?.message?.length > 15 ? "..." : ""
+			}`;
+		} else {
+			 return `${convData?.user?.name}: ${(convData?.lastMessage?.message || "").slice(0, 15)}${
+				convData?.lastMessage?.message?.length > 15 ? "..." : ""
+			}`;
+		}
+	};
+
 	return (
 		<div
 			className={classNames(
@@ -49,16 +65,27 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 			)}
 			{...(!isAdmin && !isConversationListLoading && { onClick: () => setSelectedConversation(convData) })}
 		>
-			<div className="flex gap-2 lg:gap-4 items-center">
+			<div className="flex gap-2 lg:gap-4 items-center w-full">
 				{getConditionalAvatar()}
-				<div>
+				<div className="flex-1">
 					<div className="flex gap-2 items-center">
 						{!isConversationListLoading ? (
-							<CustomTypography
-								label={isAdmin ? "Admin" : convData?.user?.name}
-								variant="body1"
-								className="text-start ubuntu-medium"
-							/>
+							<div className="flex justify-between items-center w-full">
+								<CustomTypography
+									label={isAdmin ? "Admin" : convData?.user?.name}
+									variant="body1"
+									className="text-start ubuntu-medium"
+								/>
+								<CustomTypography
+									label={convData?.lastMessage?.dateTime ?? ""}
+									variant="caption"
+									className={classNames("text-end break-words", {
+										"!text-primaryDarkBg": !isAdmin,
+										hidden: isAdmin,
+									})}
+									wrapperClassName="flex-1"
+								/>
+							</div>
 						) : (
 							<Skeleton
 								wrapperClassName={classNames({
@@ -69,10 +96,10 @@ const Conversation = ({ convData, isAdmin = false, setSelectedConversation, clas
 					</div>
 					{!isConversationListLoading ? (
 						<CustomTypography
-							label={isAdmin ? currentUser?.email : convData?.lastMessage?.message ?? ""}
+							label={getLastMessageUI()}
 							variant="body2"
 							className={classNames("text-start break-words", {
-								"!text-primaryDarkBg" : !isAdmin
+								"!text-primaryDarkBg": !isAdmin,
 							})}
 						/>
 					) : (

@@ -15,6 +15,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 	const [isConversationListLoading, setIsConversationListLoading] = useState(true);
 	const [isShowAddUserAutoComplete, setIsShowAddUserAutoComplete] = useState(false);
 	const [selectedUserValue, setSelectedUserValue] = useState(null);
+	const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 	const [users, setUsers] = useState([]);
 	const formattedUsersList = useRef([]);
 	const conversationListRef = useRef([]);
@@ -37,16 +38,14 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 					lastMessage: {
 						message: conversation.lastMessage.message,
 						senderId: conversation.lastMessage.senderId,
+						dateTime: conversation.lastMessage?.dateTime,
 					},
 				};
-				debugger
 				setConversationList(localConversationList);
 				conversationListRef.current = localConversationList;
 			});
 		}
 	}, [socket, currentUser]);
-
-	console.log(conversationList);
 
 	const fetchConversations = async () => {
 		try {
@@ -91,6 +90,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 
 	const handleCreateConversation = async () => {
 		try {
+			setIsCreatingConversation(true);
 			let senderId = currentUser._id;
 			let receiverId = formattedUsersList.current.find((item) => item.label === selectedUserValue.label).id;
 			let { data } = await createConversation({ senderId, receiverId });
@@ -100,6 +100,8 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 		} catch (error) {
 			console.log(error);
 			showToast(error);
+		} finally {
+			setIsCreatingConversation(false);
 		}
 	};
 
@@ -161,7 +163,12 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 								setValue={setSelectedUserValue}
 							/>
 						</div>
-						<CustomButton disabled={!selectedUserValue} label="CHAT" onClick={handleCreateConversation} size="small" />
+						<CustomButton
+							disabled={!selectedUserValue || isCreatingConversation}
+							label="CHAT"
+							onClick={handleCreateConversation}
+							size="small"
+						/>
 					</div>
 				)}
 				<div

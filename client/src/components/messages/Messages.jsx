@@ -15,6 +15,7 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 	const [userInput, setuserInput] = useState("");
 	const [messagesList, setMessagesList] = useState([]);
 	const [isMessagesListLoading, setIsMessagesListLoading] = useState(true);
+	const [isMessagesSending, setIsMessagesSending] = useState(false);
 	const bottomScrollViewRef = useRef(null);
 	const { currentUser } = useContext(AuthContext);
 	const { socket } = useContext(SocketContext);
@@ -57,6 +58,7 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 
 	const sendMessage = useCallback(async () => {
 		try {
+			setIsMessagesSending(true);
 			let payload = {
 				conversationId: selectedConversation?.conversationId,
 				senderId: currentUser?._id,
@@ -69,6 +71,8 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 			setuserInput("");
 		} catch (error) {
 			showToast(error);
+		} finally {
+			setIsMessagesSending(false);
 		}
 	}, [selectedConversation, userInput]);
 
@@ -127,7 +131,13 @@ const Messages = ({ wrapperClassName, selectedConversation, setIsShowMessagesUI 
 							size="small"
 							autoFocus={!checkIfUserOnMobile()}
 						/>
-						<IconButton type="submit" color="primary" className="!text-primaryDarkBg h-full" aria-label="send message">
+						<IconButton
+							disabled={isMessagesSending}
+							type="submit"
+							color="primary"
+							className="!text-primaryDarkBg h-full"
+							aria-label="send message"
+						>
 							<Send className="!text-3xl" />
 						</IconButton>
 					</form>
