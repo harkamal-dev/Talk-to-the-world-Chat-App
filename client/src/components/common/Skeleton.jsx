@@ -10,14 +10,14 @@ const VARIANTS = {
 const Skeleton = ({ variant = "title", wrapperClassName }) => {
 	if (variant === VARIANTS.title) {
 		return (
-			<div className={classNames("animate-pulse w-40 lg:w-72 p-1", wrapperClassName)}>
+			<div className={classNames("animate-pulse w-40 lg:w-60 p-1", wrapperClassName)}>
 				<div className="rounded-lg bg-gray-200 h-8"></div>
 			</div>
 		);
 	}
 	if (variant === VARIANTS.text) {
 		return (
-			<div className={classNames("animate-pulse w-40 lg:w-72 p-1", wrapperClassName)}>
+			<div className={classNames("animate-pulse w-40 lg:w-60 p-1", wrapperClassName)}>
 				<div className="rounded-lg bg-gray-200 h-4"></div>
 			</div>
 		);

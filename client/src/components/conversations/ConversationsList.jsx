@@ -67,7 +67,7 @@ const ConversationList = ({ wrapperClassName, setSelectedConversation, selectedC
 				let customUsersData = data
 					.filter((el) => el._id !== currentUser._id)
 					.map((item) => ({
-						label: `${item.fullName} (${item.email})`,
+						label: item.fullName,
 						id: item._id,
 					}));
 				formattedUsersList.current = customUsersData;

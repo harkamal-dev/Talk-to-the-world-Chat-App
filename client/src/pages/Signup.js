@@ -47,7 +47,7 @@ const Signup = () => {
 
 				<form id="loginForm" onSubmit={handleSubmit} className="w-full flex justify-center">
 					<div className="flex flex-col gap-6 w-full lg:w-3/4">
-						<Input label="Name" id="fullName" value={formData.fullName} onChange={handleChange} />
+						<Input variant="standard" label="Name" id="fullName" value={formData.fullName} onChange={handleChange} />
 						<Input
 							label="Email"
 							id="email"
@@ -55,8 +55,16 @@ const Signup = () => {
 							onChange={handleChange}
 							error={errors.email}
 							helperText={errors.email}
+							variant="standard"
 						/>
-						<Input label="Password" id="password" type="password" value={formData.password} onChange={handleChange} />
+						<Input
+							label="Password"
+							id="password"
+							variant="standard"
+							type="password"
+							value={formData.password}
+							onChange={handleChange}
+						/>
 						<CustomButton type="submit" label="SIGNUP" />
 					</div>
 				</form>

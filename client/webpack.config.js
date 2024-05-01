@@ -42,6 +42,7 @@ module.exports = (env) => {
 				hooks: path.resolve(__dirname, "src/hooks/"),
 				contexts: path.resolve(__dirname, "src/context/"),
 				helpers: path.resolve(__dirname, "src/helpers"),
+				assets: path.resolve(__dirname, "src/assets"),
 			},
 		},
 		devtool: isProduction ? "source-map" : "cheap-module-source-map",

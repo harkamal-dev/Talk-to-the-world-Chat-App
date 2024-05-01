@@ -9,7 +9,6 @@ import connectDB from "./db/connection.js";
 import Users from "./models/users.js";
 import Conversations from "./models/conversations.js";
 import Messages from "./models/messages.js";
-import moment from "moment-timezone";
 import { formatIST, getFormattedDateTime } from "./helpers.js";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "JWT_VERY_SECRET_KEY";
